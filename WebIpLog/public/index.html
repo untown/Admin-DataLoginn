@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hoş Geldiniz</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .gorusuruz {
+            margin-top: 20px;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hoş Geldiniz</h1>
+        <input type="text" id="isim" placeholder="Adınız Nedir?">
+        <button onclick="girisYap()">Giriş Yap</button>
+        <p class="gorusuruz" id="gorusuruzMesaji" style="display:none;">Görüşürüz...</p>
+    </div>
+    <script>
+        function girisYap() {
+            const isim = document.getElementById('isim').value;
+            const isimRegex = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{3,}$/; // En az 3 harf veya karakter
+            if (!isimRegex.test(isim)) {
+                alert('Lütfen geçerli bir isim girin (en az 3 harf veya karakter).');
+                return;
+            }
+
+            // Arka uca (backend) veri gönderme
+            fetch('/giris', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ isim: isim })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('gorusuruzMesaji').style.display = 'block';
+                    document.getElementById('isim').value = ''; // Inputu temizle
+                } else {
+                    alert('Giriş başarısız!');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu!');
+            });
+        }
+    </script>
+</body>
+</html>
